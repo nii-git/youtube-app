@@ -7,18 +7,13 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"youtube-app/api/model"
 )
-
-type config struct {
-	YoutubeApiKey string `json:youtubeApiKey`
-}
-type apiResponse struct {
-	Kind string `json:kind`
-}
 
 func main() {
 	var youtubeListId string
-	var config config
+	var config model.Config
+	var apiPlayListItemListResponse model.ApiPlayListItemListResponse
 
 	// 引数チェック
 	if len(os.Args) != 2 {
@@ -59,17 +54,13 @@ func main() {
 		return
 	}
 
-	var x apiResponse
-
-	err = json.Unmarshal(byteArray, &x)
+	err = json.Unmarshal(byteArray, &apiPlayListItemListResponse)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	fmt.Printf("(%%#v) %#v\n", x)
+	fmt.Printf("(%%#v) %#v\n", apiPlayListItemListResponse)
 
 	//fmt.Println(string(byteArray))
 }
-
-// https://www.googleapis.com/youtube/v3/playlistItems?key=AIzaSyBsIWp3vAWFF6_UfX_4F5P5Pb7KCMcSaiM&part=snippet&playlistId=PLRdiaanKAFQl5ERDgJHx2ZRKCcIl-I8fz&maxResults=50
