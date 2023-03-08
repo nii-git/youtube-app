@@ -9,7 +9,7 @@ import (
 	"os"
 	"sort"
 	"strconv"
-	"youtube-app/api/model"
+	"youtube-app/youtube-analyze-playlist/model"
 
 	"golang.org/x/exp/slices"
 )

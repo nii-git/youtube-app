@@ -1,4 +1,4 @@
-module youtube-app/api
+module youtube-app/youtube-analyze-playlist
 
 go 1.20
 
