@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,7 +10,8 @@ import (
 	"os"
 	"sort"
 	"strconv"
-	"youtube-app/youtube-analyze-playlist/model"
+	"time"
+	"youtube-app/youtube-playlist-analyze/model"
 
 	"golang.org/x/exp/slices"
 )
@@ -18,7 +20,7 @@ func main() {
 	var youtubeListId string
 	var config model.Config
 
-	// 引数チェック
+	// Check Argument
 	if len(os.Args) != 2 {
 		fmt.Println("Invalid args. Usage: go run main.go {PlaylistId}")
 		return
@@ -28,7 +30,8 @@ func main() {
 
 	getPlayListAPIUrl := "https://www.googleapis.com/youtube/v3/playlistItems"
 	getVideoAPIUrl := "https://www.googleapis.com/youtube/v3/videos"
-	// 設定ファイル読み込み
+
+	// Check Configuration file
 	file, err := os.Open("config.json")
 	if err != nil {
 		fmt.Println(err.Error())
@@ -131,7 +134,18 @@ func main() {
 
 	// sort
 	sort.SliceStable(resultList, func(i, j int) bool { return resultList[i].ViewCount > resultList[j].ViewCount })
-	fmt.Printf("(%%#v) %#v\n", resultList)
+
+	// export
+	resultFile, err := os.Create("./result/" + time.Now().Format("20060102") + "_" + youtubeListId + ".csv")
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	defer resultFile.Close()
+
+	writer := csv.NewWriter(resultFile)
+	writer.WriteAll(resultVideoToStringArrays(resultList))
 }
 
 func mergeAPIResponseToResult(listItems []model.ListItems, videoItems []model.VideosItems) ([]model.ResultVideo, error) {
@@ -166,4 +180,18 @@ func mergeAPIResponseToResult(listItems []model.ListItems, videoItems []model.Vi
 		result = append(result, res)
 	}
 	return result, nil
+}
+
+func resultVideoToStringArrays(r []model.ResultVideo) [][]string {
+	var result [][]string
+
+	// add header
+	result = append(result, []string{"videoid", "title", "viewcount", "likecount", "commentcount"})
+
+	for i := 0; i < len(r); i++ {
+		str := []string{r[i].VideoId, r[i].Title, strconv.Itoa(r[i].ViewCount), strconv.Itoa(r[i].LikeCount), strconv.Itoa(r[i].CommentCount)}
+		result = append(result, str)
+	}
+
+	return result
 }
