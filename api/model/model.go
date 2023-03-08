@@ -33,6 +33,7 @@ type ApivideoListResponseWithStatistics struct {
 type VideosItems struct {
 	Etag       string     `json:"etag"`
 	Statistics Statistics `json:"statistics"`
+	VideoId    string     `json:"id"`
 }
 
 type Statistics struct {
