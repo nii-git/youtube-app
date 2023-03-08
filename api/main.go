@@ -60,8 +60,6 @@ func main() {
 			return
 		}
 
-		//fmt.Println(getPlayListAPIUrl + "?key=" + config.YoutubeApiKey + "&part=snippet&playlistId=" + youtubeListId + "&pageToken=" + nextPageToken)
-
 		byteArray, err := io.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -73,8 +71,6 @@ func main() {
 			fmt.Println(err.Error())
 			return
 		}
-
-		//fmt.Printf("(%%#v) %#v\n", apiPlayListItemListResponse)
 
 		if len(apiPlayListItemListResponse.Items) == 0 {
 			fmt.Println("ERROR: Response count is 0")
